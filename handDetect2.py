@@ -22,14 +22,17 @@ while cap.isOpened():
     results = hands.process(frame_rgb)
 
     if results.multi_hand_landmarks:
+        num_hands = len(results.multi_hand_landmarks)  # Get the number of detected hands
+        print(f"Number of hands detected: {num_hands}")
+
         for landmarks in results.multi_hand_landmarks:
             # Loop through landmarks and draw them on the frame
             for landmark in landmarks.landmark:
                 x, y, z = int(landmark.x * frame.shape[1]), int(landmark.y * frame.shape[0]), int(landmark.z * frame.shape[1])
                 cv2.circle(frame, (x, y), 5, (0, 255, 0), -1)
 
-        # Draw hand landmarks on the frame
-        mp_drawing.draw_landmarks(frame, landmarks, mp_hands.HAND_CONNECTIONS)
+            # Draw hand landmarks on the frame
+            mp_drawing.draw_landmarks(frame, landmarks, mp_hands.HAND_CONNECTIONS)
 
     # Display the frame with hand landmarks
     cv2.imshow('Hand Landmarks', frame)
