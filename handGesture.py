@@ -1,5 +1,7 @@
 import mediapipe as mp
 import cv2
+from handFunctions import draw_landmarks_on_image
+
 BaseOptions = mp.tasks.BaseOptions
 GestureRecognizer = mp.tasks.vision.GestureRecognizer
 GestureRecognizerOptions = mp.tasks.vision.GestureRecognizerOptions
@@ -8,10 +10,6 @@ VisionRunningMode = mp.tasks.vision.RunningMode
 
 # Create a gesture recognizer instance with the live stream mode:
 def print_result(result: GestureRecognizerResult, output_image: mp.Image, timestamp_ms: int):
-    #print('gesture recognition result: {}'.format(result))
-    #print('Gesture type:{}'.format(result.gestures[0]))
-    #print('hand type:{}'.format(result.handedness))
-
     for gesture in result.gestures:
         #print([category.category_name for category in gesture])
         print('Gesture type:{}'.format([category.category_name for category in gesture]))
@@ -46,21 +44,26 @@ with GestureRecognizer.create_from_options(options) as recognizer:
             break
 
         timestamp += 1
-        
+        #print(timestamp)
+
         vidFrame = mp.Image(
             image_format=mp.ImageFormat.SRGB,
             data=video
         )
+        #print(vidFrame)
 
         recognition_result = recognizer.recognize_async(vidFrame, timestamp)
+        #print("this is recognition:", recognition_result)
+        #print(options)
 
-        if recognition_result is not None:
-            #annotated_frame = draw_landmarks_on_image(vidFrame, detection_result)
-            #print("this is annotated frame")
-            continue
-        else:
-            print("No hand landmarks detected in this frame.")
-
+        # if recognition_result is not None:
+        #     print('detected')
+        #     annotated_frame = draw_landmarks_on_image(vidFrame, recognition_result)
+        #     #print("this is annotated frame")
+        #     cv2.imshow("Live Video Feed", annotated_frame)
+        # else:
+        #     #print("No hand landmarks detected in this frame.")
+        #     cv2.imshow("Live Video Feed", video)
 
         # Display the frame in a window
         #cv2.imshow("Live Video Feed", annotated_frame)
