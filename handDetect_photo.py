@@ -47,7 +47,7 @@ image = mp.Image(
 
 # STEP 4: Detect hand landmarks from the input image.
 detection_result = detector.detect(image)
-
+#print(detection_result)
 # STEP 5: Process the classification result. In this case, visualize it.
 annotated_image = draw_landmarks_on_image(image.numpy_view(), detection_result)
 
