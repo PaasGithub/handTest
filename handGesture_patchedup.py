@@ -21,6 +21,7 @@ def print_result(result: GestureRecognizerResult, output_image: mp.Image, timest
 options = GestureRecognizerOptions(
     base_options=BaseOptions(model_asset_path='C:/Users/45818/Desktop/code/handTest/gesture_recognizer.task'),
     running_mode=VisionRunningMode.LIVE_STREAM,
+    num_hands = 2,
     result_callback=print_result)
 
 timestamp = 0
@@ -59,7 +60,7 @@ with GestureRecognizer.create_from_options(options) as recognizer:
 
         if detectresults.multi_hand_landmarks:
             num_hands = len(detectresults.multi_hand_landmarks)  # Get the number of detected hands
-            print(f"Number of hands detected: {num_hands}")
+            #print(f"Number of hands detected: {num_hands}")
 
             vidFrame = mp.Image(
                 image_format=mp.ImageFormat.SRGB,
@@ -74,12 +75,12 @@ with GestureRecognizer.create_from_options(options) as recognizer:
                 for landmark in landmarks.landmark:
                     x, y, z = int(landmark.x * video.shape[1]), int(landmark.y * video.shape[0]), int(landmark.z * video.shape[1])
                     cv2.circle(video, (x, y), 5, (0, 255, 0), -1)
-
+                    #cv2.putText(video,())
                 # Draw hand landmarks on the frame
                 mp_drawing.draw_landmarks(video, landmarks, mp_hands.HAND_CONNECTIONS)
 
-        else:
-            print("noHands")
+        #else:
+            #print("noHands")
 
         # vidFrame = mp.Image(
         #     image_format=mp.ImageFormat.SRGB,

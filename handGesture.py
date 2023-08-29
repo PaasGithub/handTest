@@ -21,6 +21,7 @@ def print_result(result: GestureRecognizerResult, output_image: mp.Image, timest
 options = GestureRecognizerOptions(
     base_options=BaseOptions(model_asset_path='C:/Users/45818/Desktop/code/handTest/gesture_recognizer.task'),
     running_mode=VisionRunningMode.LIVE_STREAM,
+    num_hands = 2,
     result_callback=print_result)
 
 timestamp = 0
