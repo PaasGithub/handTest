@@ -145,3 +145,6 @@ class GestureRecognizer:
 if __name__ == "__main__":
     rec = GestureRecognizer()
     rec.main()
+
+
+#had help from here https://tinyurl.com/gestrureRec
