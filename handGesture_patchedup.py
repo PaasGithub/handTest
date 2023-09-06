@@ -2,6 +2,7 @@ import mediapipe as mp
 import cv2
 from handFunctions import draw_landmarks_on_image
 import threading 
+import screen_brightness_control as sbc
 
 class GestureRecognizer:
     GestureRecognizerResult = mp.tasks.vision.GestureRecognizerResult
@@ -15,6 +16,29 @@ class GestureRecognizer:
             #print([category.category_name for category in gesture])
             print('Gesture type:{}'.format([category.category_name for category in gesture]))
             self.current_gestures.append([category.category_name for category in gesture])
+
+            if (([category.category_name for category in gesture]) == ['Pointing_Up']):
+                #get current brightness of primary display (monitor)
+                current_brightness = sbc.get_brightness(display=0)
+
+                #print current brightness of primary display (monitor)
+                #comes as integer
+                print("Original current brightness: ", current_brightness)
+
+                brightness_str = ''.join(map(str, current_brightness))
+                brightness_int = int(brightness_str)
+
+
+                if (brightness_int < 100):
+                    newBrightness_int = brightness_int + 1
+                    sbc.set_brightness(newBrightness_int, display=0)
+
+                    #get new current brightness of primary display (monitor)
+                    new_current_brightness = sbc.get_brightness(display=0)
+
+                    print("New current brightness: ", new_current_brightness)
+            else:
+                continue
         
         for handedness in result.handedness:
             #print([category.category_name for category in gesture])
@@ -98,25 +122,6 @@ class GestureRecognizer:
 
                 #else:
                     #print("noHands")
-
-                # vidFrame = mp.Image(
-                #     image_format=mp.ImageFormat.SRGB,
-                #     data=video
-                # )
-                # #print(vidFrame)
-
-                # recognition_result = recognizer.recognize_async(vidFrame, timestamp)
-                #print("this is recognition:", recognition_result)
-                #print(options)
-
-                # if recognition_result is not None:
-                #     print('detected')
-                #     annotated_frame = draw_landmarks_on_image(vidFrame, recognition_result)
-                #     #print("this is annotated frame")
-                #     cv2.imshow("Live Video Feed", annotated_frame)
-                # else:
-                #     #print("No hand landmarks detected in this frame.")
-                #     cv2.imshow("Live Video Feed", video)
 
                 # Display the frame in a window
                 #cv2.imshow("Live Video Feed", annotated_frame)
