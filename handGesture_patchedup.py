@@ -1,6 +1,6 @@
 import mediapipe as mp
 import cv2
-from handFunctions import draw_landmarks_on_image
+from handFunctions import gestureAssign
 import threading 
 import screen_brightness_control as sbc
 
@@ -13,33 +13,20 @@ class GestureRecognizer:
         self.current_gestures = []
         
         for gesture in result.gestures:
-            #print([category.category_name for category in gesture])
-            print('Gesture type:{}'.format([category.category_name for category in gesture]))
-            self.current_gestures.append([category.category_name for category in gesture])
+            #######
+            #possible gestures
+            #['Pointing_Up'],['Open_Palm'],['Closed_Fist'],
+            #['Thumb_down'],['ILoveYou'],['Victory']
+            #######
 
-            if (([category.category_name for category in gesture]) == ['Pointing_Up']):
-                #get current brightness of primary display (monitor)
-                current_brightness = sbc.get_brightness(display=0)
+            #detect gestures, print them out and append them for on screen display    
+            detectedGesture = [category.category_name for category in gesture]            
+            print('Gesture type:{}'.format(detectedGesture))
+            self.current_gestures.append(detectedGesture)
 
-                #print current brightness of primary display (monitor)
-                #comes as integer
-                print("Original current brightness: ", current_brightness)
-
-                brightness_str = ''.join(map(str, current_brightness))
-                brightness_int = int(brightness_str)
-
-
-                if (brightness_int < 100):
-                    newBrightness_int = brightness_int + 1
-                    sbc.set_brightness(newBrightness_int, display=0)
-
-                    #get new current brightness of primary display (monitor)
-                    new_current_brightness = sbc.get_brightness(display=0)
-
-                    print("New current brightness: ", new_current_brightness)
-            else:
-                continue
-        
+            #assign gestures to actions
+            gestureAssign.incBrightness(detectedGesture,['Pointing_Up'])
+            
         for handedness in result.handedness:
             #print([category.category_name for category in gesture])
             print('Hand type:{}'.format([category.category_name for category in handedness]))
@@ -81,7 +68,6 @@ class GestureRecognizer:
             while True:
                 # Read a frame from the camera
                 success, video = cap.read()
-                frame_timestamp_ms = int(cap.get(cv2.CAP_PROP_POS_MSEC))
 
                 # Check if the frame was successfully read
                 if not success:
