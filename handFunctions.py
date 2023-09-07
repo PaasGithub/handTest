@@ -7,6 +7,10 @@ import cv2
 
 import screen_brightness_control as sbc
 
+from ctypes import cast, POINTER
+from comtypes import CLSCTX_ALL
+from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
+
 MARGIN = 10  # pixels
 FONT_SIZE = 1
 FONT_THICKNESS = 1
@@ -72,5 +76,33 @@ class gestureAssign:
 
         print("New current brightness: ", new_current_brightness)    
 
- #def incVolume(detected_gesture, chosen_gesture):
-        
+  def incVolume(detected_gesture, chosen_gesture,increase_by_percentage):
+    if (detected_gesture == chosen_gesture):
+      devices = AudioUtilities.GetSpeakers()
+      interface = devices.Activate(
+          IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+      volume = cast(interface, POINTER(IAudioEndpointVolume))
+
+      current_volume = volume.GetMasterVolumeLevelScalar()
+      new_volume = min(1.0, current_volume + (increase_by_percentage / 100.0))
+      
+      volume.SetMasterVolumeLevelScalar(new_volume, None)
+      #print("Decimal New volume: ", new_volume)
+      #print("New Volume: {}".format((new_volume * 100)))
+      print("New Volume Integer: {}".format(round(new_volume * 100)))
+
+
+  def decVolume(detected_gesture, chosen_gesture,decrease_by_percentage):
+    if (detected_gesture == chosen_gesture):
+      devices = AudioUtilities.GetSpeakers()
+      interface = devices.Activate(
+          IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+      volume = cast(interface, POINTER(IAudioEndpointVolume))
+
+      current_volume = volume.GetMasterVolumeLevelScalar()
+      new_volume = max(0.0, current_volume - (decrease_by_percentage / 100.0))
+      
+      volume.SetMasterVolumeLevelScalar(new_volume, None)
+      #print("Decimal New volume: ", new_volume)
+      #print("New Volume: {}".format((new_volume * 100)))
+      print("New Volume Integer: {}".format(round(new_volume * 100)))

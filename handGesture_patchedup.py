@@ -16,7 +16,7 @@ class GestureRecognizer:
             #######
             #possible gestures
             #['Pointing_Up'],['Open_Palm'],['Closed_Fist'],
-            #['Thumb_down'],['ILoveYou'],['Victory']
+            #['Thumb_Down'],['ILoveYou'],['Victory'], ['Thumb_Up']
             #######
 
             #detect gestures, print them out and append them for on screen display    
@@ -25,8 +25,14 @@ class GestureRecognizer:
             self.current_gestures.append(detectedGesture)
 
             #assign gestures to actions
-            gestureAssign.incBrightness(detectedGesture,['Pointing_Up'])
-            
+            try:
+                gestureAssign.incBrightness(detectedGesture,['Pointing_Up'])
+                gestureAssign.incVolume(detectedGesture,['Thumb_Up'],2)
+                gestureAssign.decVolume(detectedGesture,['Thumb_Down'],2)
+            except Exception as e:
+                print(f"An error occurred: {str(e)}")
+
+
         for handedness in result.handedness:
             #print([category.category_name for category in gesture])
             print('Hand type:{}'.format([category.category_name for category in handedness]))

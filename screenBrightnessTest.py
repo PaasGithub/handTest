@@ -1,5 +1,10 @@
 import screen_brightness_control as sbc
+
 import pyautogui
+
+from ctypes import cast, POINTER
+from comtypes import CLSCTX_ALL
+from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 
 def brightTest():
     #get current brightness of primary display (monitor)
@@ -43,4 +48,22 @@ def volumeTest():
     print (a)
     pyautogui.press('volumeup',2)
 
-volumeTest()
+#NB:specified to Windows OS
+def increase_system_volume(increase_by_percentage):
+    devices = AudioUtilities.GetSpeakers()
+    interface = devices.Activate(
+        IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+    volume = cast(interface, POINTER(IAudioEndpointVolume))
+
+    current_volume = volume.GetMasterVolumeLevelScalar()
+    new_volume = min(1.0, current_volume + (increase_by_percentage / 100.0))
+    
+    volume.SetMasterVolumeLevelScalar(new_volume, None)
+    print("Decimal New volume: ", new_volume)
+    print("New Volume: {}".format((new_volume * 100)))
+    print("New Volume Integer: {}".format(round(new_volume * 100)))
+    
+if __name__ == "__main__":
+    increase_by_percentage = 10  # Increase the system volume by 10% (adjust as needed)
+
+    increase_system_volume(increase_by_percentage)
